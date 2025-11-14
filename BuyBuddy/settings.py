@@ -15,8 +15,9 @@ ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
 CSRF_TRUSTED_ORIGINS = [
     "https://www.buybuddy.site",
     "https://buybuddy.site",
-    "https://" + os.getenv("HOSTNAME"),
 ]
+if os.getenv("HOSTNAME"):
+  CSRF_TRUSTED_ORIGINS.append(f"https://{os.getenv('HOSTNAME')}")
 
 # 允許跨域請求攜帶認證資訊 (cookies, session 等)
 SECURE_CROSS_ORIGIN_OPENER_POLICY = "same-origin-allow-popups"
@@ -274,7 +275,7 @@ REDIS_HOST = os.getenv('REDIS_HOST', 'localhost')
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": f"redis://{REDIS_HOST}:6379/1", 
+        "LOCATION": f"redis://{REDIS_HOST}:6379/1",
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         }
@@ -297,7 +298,7 @@ LOGGING = {
     "loggers": {
         "django": {
             "handlers": ["console"],
-            "level": "DEBUG",
+            "level": "INFO",
             "propagate": True,
             },
         "django.request": {
