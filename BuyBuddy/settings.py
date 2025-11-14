@@ -13,8 +13,8 @@ DEBUG = os.getenv("DEBUG", "False").lower() in ("true", "1", "t")
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
 
 CSRF_TRUSTED_ORIGINS = [
-    "https://www.buybuddy.site",
-    "https://buybuddy.site",
+    "https://www.buybudddy.com",
+    "https://buybudddy.com",
 ]
 if os.getenv("HOSTNAME"):
   CSRF_TRUSTED_ORIGINS.append(f"https://{os.getenv('HOSTNAME')}")
@@ -102,7 +102,7 @@ HOSTNAME = os.getenv("HOSTNAME")
 # 開發階段先把密碼的各種驗證都關掉
 # 開發階段僅保留最小長度驗證
 if DEBUG:
-    SITE_URL = "http://127.0.0.1:8000"
+    SITE_URL = f"http://{os.getenv('HOSTNAME', '127.0.0.1')}"
     SITE_NAME = "buybuddy (dev)"
 
     # Session  Cookie 設定
@@ -121,7 +121,7 @@ if DEBUG:
     ]
 else:
     # TODO: 正式上線要改網域
-    SITE_URL = "https://www.buybuddy.site"
+    SITE_URL = "https://www.buybudddy.com"
     SITE_NAME = "buybuddy"
     SESSION_COOKIE_SECURE = True
     SESSION_COOKIE_SAMESITE = "Lax"
