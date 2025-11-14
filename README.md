@@ -17,7 +17,7 @@ BuyBuddy，正是一個為團購而生的平台，我們的目標是幫助使用
 一起在 BuyBuddy 裡找到跟你一起 Buy 的 Buddy 吧！
 
 <p>
-  <a href="https://buybuddy.site/" target="_blank">專案網址</a>
+  <a href="https://www.buybudddy.com/" target="_blank">專案網址</a>
 </p>
 
 ## 技術架構
