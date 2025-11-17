@@ -36,7 +36,7 @@ def js_line_client(request):
         "response_type": "code",
         "client_id": settings.LINE_LOGIN_CHANNEL_ID,
         "redirect_uri": f"https://{settings.HOSTNAME}/users/line_social-oauth2/",
-        "scope": "profile openid email",
+        "scope": "profile openid",
         "state": state
     }
 
@@ -107,11 +107,11 @@ def line_code_handler(code):
       "Content-Type": "application/x-www-form-urlencoded",
   }
 
-  
+
   response = requests.post(post_url, data=data, headers=headers)
   if response.status_code != 200:
       raise Exception(f"取得用戶資料失敗: {response.status_code}")
-      
+
   token_data = response.json()
   return {
       "success": True,
@@ -129,14 +129,14 @@ def line_token_parser(token):
   }
 
   response = requests.post(url, data=data)
-  
+
   if response.status_code != 200:
       raise Exception(f"解析 Line token 失敗: {response.status_code}")
 
   return response.json()
-  
+
 def check_verify_code(request, context, verify_code):
-  
+
   # 檢查驗證碼是否輸入
   if verify_code:
       # 檢查驗證碼是否正確
@@ -154,12 +154,12 @@ def check_verify_code(request, context, verify_code):
       else:
           messages.error(request, check['message'])
           return render(request, "users/line_no_email.html", context)
-  
+
   # 如果驗證碼未輸入，則顯示 verify_code_error 錯誤訊息
   else:
     context['verify_code_error'] = "請輸入驗證碼"
     raise ImmediateHttpResponse(render(request, "users/line_no_email.html", context))
-  
+
 
 def verify_email_code(input_email, verify_code):
   stored_code = cache.get(f"verify_code_{input_email}")
@@ -168,7 +168,7 @@ def verify_email_code(input_email, verify_code):
       "success": False,
       "message": "驗證碼不存在或已過期"
     }
-  
+
   if str(stored_code) == str(verify_code):
       # 驗證成功後刪除驗證碼
       cache.delete(f"verify_code_{input_email}")
@@ -176,7 +176,7 @@ def verify_email_code(input_email, verify_code):
         "success": True,
         "message": "驗證成功"
       }
-  
+
   return {
     "success": False,
     "message": "驗證碼錯誤"
@@ -186,11 +186,11 @@ def verify_email_code(input_email, verify_code):
 
 def send_verify_code(request, email):
   verify_code = secrets.randbelow(900000) + 100000
-    
+
     # 將驗證碼存到快取，5分鐘過期
   cache.set(f"verify_code_{email}", verify_code, timeout=300)
-  
-  try: 
+
+  try:
       mail = AnymailMessage(template_id="信箱綁定驗證", to=[email])
       # 使用 merge_global_data 傳遞變數到 Mailgun 模板
       mail.merge_global_data = {
@@ -215,13 +215,13 @@ def create_social_login(user_info, provider):
   # 創建 SocialAccount
   social_login.account = SocialAccount()
   social_login.account.provider = provider
-  
+
   # 根據不同的提供商設定 uid
   if provider == 'google':
       social_login.account.uid = user_info.get("sub")  # Google 用戶 ID
   elif provider == 'line':
       social_login.account.uid = user_info.get("user_id")  # Line 用戶 ID
-  
+
   social_login.account.extra_data = user_info
 
   # 創建 暫時的 User
